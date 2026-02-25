@@ -1,0 +1,27 @@
+inherit_gem:
+  main_branch_shared_rubocop_config: config/rubocop.yml
+
+inherit_mode:
+  merge:
+    - Exclude
+
+Naming/FileName:
+  Exclude:
+    - 'lib/yard_example_runner.rb'
+
+Style/DocumentDynamicEvalDefinition:
+  Exclude:
+    - 'lib/yard_example_runner/example.rb'
+    - 'lib/yard_example_runner/example/evaluator.rb'
+
+# Allow test data to have long lines
+Layout/LineLength:
+  Exclude:
+    - "*.gemspec"
+
+Metrics/BlockLength:
+  Exclude:
+    - "*.gemspec"
+
+AllCops:
+  TargetRubyVersion: 3.3
