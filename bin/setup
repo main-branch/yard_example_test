@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+set -vx
+
+bundle install
+
+if [ -x "$(command -v npm)" ]; then
+  npm install
+else
+  echo "npm is not installed"
+  echo "Install npm then re-run this script to enable the conventional commit git hook."
+fi
