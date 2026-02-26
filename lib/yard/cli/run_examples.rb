@@ -1,6 +1,23 @@
 # frozen_string_literal: true
 
+# Extension of the {YARD} module provided by the `yard` gem
+#
+# This gem reopens the top-level {YARD} namespace from the `yard` dependency
+# in order to register additional CLI commands.
+#
+# @api private
+#
+# @see https://rubydoc.info/docs/yard/YARD YARD
+#
 module YARD
+  # Namespace for command-line interface components provided by the `yard` gem
+  #
+  # This gem reopens {YARD::CLI} to add the {YARD::CLI::RunExamples} command.
+  #
+  # @api private
+  #
+  # @see https://rubydoc.info/docs/yard/YARD/CLI YARD::CLI
+  #
   module CLI
     # Implements the +yard run-examples+ command
     #

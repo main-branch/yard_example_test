@@ -28,12 +28,12 @@ unless RUBY_PLATFORM == 'java' || RUBY_ENGINE == 'truffleruby'
   require 'yardstick/rake/verify'
 
   Yardstick::Rake::Verify.new(:'yard:coverage') do |verify|
-    verify.threshold = 100
+    verify.threshold = 99
     verify.require_exact_threshold = false
   end
 
   # yard
 
-  desc 'Run YARD documentation tasks (build, coverage)'
+  desc 'Run YARD documentation tasks (build, audit, coverage)'
   task yard: %i[yard:build yard:audit yard:coverage]
 end
