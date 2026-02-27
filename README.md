@@ -5,8 +5,10 @@
 
 # yard_example_runner
 
-[![Gem
-Version](https://badge.fury.io/rb/yard_example_runner.svg)](https://badge.fury.io/rb/yard_example_runner)
+![Gem Version](https://img.shields.io/gem/v/yard_example_runner?label=gem%20version&color=green)
+[![Continuous Integration](https://github.com/main-branch/yard_example_runner/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/main-branch/yard_example_runner/actions/workflows/continuous-integration.yml)
+[![YARD Docs](https://img.shields.io/badge/docs-rubydoc.info-green.svg)](https://www.rubydoc.info/gems/yard_example_runner)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.txt)
 
 `YardExampleRunner` is a YARD plugin that automatically parses `@example` tags in
 your documentation and executes them as tests. It ensures code examples remain
