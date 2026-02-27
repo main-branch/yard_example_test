@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'yard', '~> 0.9'
 
   spec.add_development_dependency 'aruba', '~> 2.3'
+  spec.add_development_dependency 'irb'
   spec.add_development_dependency 'main_branch_shared_rubocop_config', '~> 0.1'
   spec.add_development_dependency 'minitest-matchers_vaccine', '~> 1.1'
   spec.add_development_dependency 'rake', '~> 13.0'
