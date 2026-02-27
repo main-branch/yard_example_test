@@ -11,8 +11,18 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.txt)
 
 `YardExampleRunner` is a YARD plugin that automatically parses `@example` tags in
-your documentation and executes them as tests. It ensures code examples remain
+your documentation and executes them as tests ensuring code examples remain
 accurate and serve as a living, executable specification.
+
+Annotate `@example` code with **expectation operators** (`#=>`):
+
+```ruby
+# @example
+#   "hello".upcase #=> "HELLO"
+```
+
+Each expectation operator verifies the actual value on the left against the expected
+value on the right.
 
 This project is derived from [yard-doctest](https://github.com/p0deje/yard-doctest),
 created by [Alex Rodionov](https://github.com/p0deje) and contributors.
@@ -20,7 +30,7 @@ created by [Alex Rodionov](https://github.com/p0deje) and contributors.
 - [Installation](#installation)
 - [Basic usage](#basic-usage)
 - [Advanced usage](#advanced-usage)
-  - [Asserting raised exceptions](#asserting-raised-exceptions)
+  - [Verifying raised exceptions](#verifying-raised-exceptions)
   - [Shared example context](#shared-example-context)
   - [Hooks](#hooks)
   - [Skipping examples](#skipping-examples)
@@ -28,7 +38,7 @@ created by [Alex Rodionov](https://github.com/p0deje) and contributors.
     - [RSpec matchers](#rspec-matchers)
     - [Minitest matchers](#minitest-matchers)
     - [Custom matchers](#custom-matchers)
-  - [Rake](#rake)
+  - [Rake task](#rake-task)
 - [Contributing](#contributing)
 
 ## Installation
@@ -113,7 +123,7 @@ end
 First, tell YARD to automatically load `yard_example_runner` by adding it as a plugin
 in your `.yardopts`:
 
-```bash
+```text
 # .yardopts
 --plugin yard_example_runner
 ```
@@ -168,14 +178,13 @@ Finished in 0.002712s, 2212.3894 runs/s, 2212.3894 assertions/s.
 6 runs, 6 assertions, 0 failures, 0 errors, 0 skips
 ```
 
-The `#=>` operator is an equality assertion: the expression on the left is the actual
-value, the value on the right is the expected value, and they are compared using Ruby's
-case equality operator (`===`). This means the right-hand side can be a plain value,
-a regular expression, a range, or a matcher object (such as an RSpec, Minitest, or
-custom matcher) — each evaluated according to its own `===` or `matches?` semantics
-rather than simple `==` equality.
+Each expectation operator verifies the actual value on the left against the expected
+value on the right. The right-hand side can be a plain value, a regular expression, a
+range, or a matcher object (such as an RSpec, Minitest, or custom matcher) — each
+evaluated according to its own `===` or `matches?` semantics rather than simple `==`
+equality.
 
-A single example can contain multiple assertions:
+A single example can contain multiple expectation operators:
 
 ```ruby
 class Rectangle
@@ -190,7 +199,7 @@ class Rectangle
 end
 ```
 
-This runs as a single test with multiple assertions:
+This runs as a single test with multiple expectation operators:
 
 ```bash
 $ bundle exec yard run-examples lib/rectangle.rb
@@ -198,8 +207,8 @@ $ bundle exec yard run-examples lib/rectangle.rb
 1 runs, 2 assertions, 0 failures, 0 errors, 0 skips
 ```
 
-Examples without any assertions are still executed to verify that no exceptions are
-raised:
+Examples without any expectation operators are still executed to verify that no
+exceptions are raised:
 
 ```ruby
 class Rectangle
@@ -224,10 +233,10 @@ example is registered as an `it` block within a dynamically generated
 
 ## Advanced usage
 
-### Asserting raised exceptions
+### Verifying raised exceptions
 
-To assert that an example raises an exception, use `raise` on the right-hand side of
-`#=>`, specifying the exception class and message:
+To verify that an example raises an exception, use `raise` on the right-hand side of
+the expectation operator, specifying the exception class and message:
 
 ```ruby
 class Calculator
@@ -240,8 +249,7 @@ end
 ```
 
 The raised exception is matched by comparing a string containing its class name and
-message. The message in the assertion must **exactly** match the message raised at
-runtime.
+message. The expected message must **exactly** match the message raised at runtime.
 
 For more flexible exception matching — such as matching by class only or using a
 regex on the message — see [RSpec matchers](#rspec-matchers), which supports
@@ -254,8 +262,6 @@ Shared example context is about making objects and methods available to examples
 before examples execute. Place shared helper methods there (or in
 `support/example_runner_helper.rb`, `spec/example_runner_helper.rb`, or
 `test/example_runner_helper.rb`).
-
-Use hooks to set shared instance-variable state for examples:
 
 For instance, if an example references an object without constructing it:
 
@@ -360,8 +366,9 @@ example (e.g. `MyClass#foo@Example one`) is not supported; use a scoped
 
 ### Using matchers (optional)
 
-The right-hand side of `#=>` supports any object that implements `matches?`. Matchers
-that also implement `failure_message` (or `failure_message_for_should`) produce better
+The right-hand side of an expectation operator supports any object that implements
+`matches?`. Matchers that also implement `failure_message` (or
+`failure_message_for_should`) produce better
 failure output. This includes [RSpec
 matchers](https://rspec.info/documentation/3.12/rspec-expectations/),
 [minitest-matchers](https://github.com/wojtekmach/minitest-matchers) or
@@ -425,8 +432,9 @@ class Calculator
 end
 ```
 
-The expected side of `#=>` is evaluated outside the documented class's namespace,
-so matchers like `include` are never shadowed by Ruby's built-in `Module#include`.
+The expected side of an expectation operator is evaluated outside the documented
+class's namespace, so matchers like `include` are never shadowed by Ruby's built-in
+`Module#include`.
 
 #### Minitest matchers
 
@@ -448,7 +456,7 @@ require 'minitest/matchers_vaccine'
 
 `yard_example_runner` does not require including a matcher module on
 `YardExampleRunner::Example`. Any matcher object that follows the `matches?` /
-`failure_message` protocol is recognised automatically.
+`failure_message` protocol is recognized automatically.
 
 #### Custom matchers
 
@@ -487,7 +495,7 @@ Block matchers additionally respond to `supports_block_expectations?` returning
 `true`, which tells `yard_example_runner` to wrap the actual expression in a proc
 before passing it to `matches?`.
 
-### Rake
+### Rake task
 
 A Rake task is available for integrating example runs into your build pipeline:
 
