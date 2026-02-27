@@ -5,6 +5,14 @@
 
 # Changelog
 
+## [0.1.2](https://github.com/main-branch/yard_example_runner/compare/v0.1.1...v0.1.2) (2026-02-27)
+
+
+### Other Changes
+
+* Add and update README badges ([4d867c5](https://github.com/main-branch/yard_example_runner/commit/4d867c546cf925bef2cf8bd305ea52ccb3d01ed2))
+* Improve README terminology and consistency ([e0f4b9c](https://github.com/main-branch/yard_example_runner/commit/e0f4b9c9f67ccdfb5d50834fcbec3ece640c2223))
+
 ## [0.1.1](https://github.com/main-branch/yard_example_runner/compare/v0.1.0...v0.1.1) (2026-02-27)
 
 
