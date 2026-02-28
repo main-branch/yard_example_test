@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module YardExampleRunner
+module YardExampleTest
   # @!parse
   #   # Represents a single expected outcome parsed from a YARD +@example+ tag
   #   #

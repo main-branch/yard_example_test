@@ -1,4 +1,4 @@
-Feature: yard run-examples
+Feature: yard test-examples
   In order to avoid publishing code examples that are broken
   As a developer
   I want to automatically parse YARD's @example tags
@@ -7,18 +7,18 @@ Feature: yard run-examples
   Background:
     # YARD stopped auto-loading all plugins at 0.6.2, so anything newer needs
     # the plugin explicitly loaded. A simple way to do this is to always have
-    # a `.yardopts` that loads `yard_example_runner`.
+    # a `.yardopts` that loads `yard_example_test`.
     Given a file named ".yardopts" with:
       """
-      --plugin yard_example_runner
+      --plugin yard_example_test
       """
 
   Scenario: adds new command to yard
     When I run `bundle exec yard --help`
-    Then the output should contain "run-examples Run @example tags as tests"
+    Then the output should contain "test-examples Run @example tags as tests"
 
   Scenario: looks for files in app/lib directories by default
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       require 'lib/lib'
@@ -39,11 +39,11 @@ Feature: yard run-examples
         one - two
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "2 runs, 2 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario Outline: looks for files only in passed glob
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       require 'lib/lib'
@@ -64,7 +64,7 @@ Feature: yard run-examples
         one - two
       end
       """
-    When I run `bundle exec yard run-examples <glob>`
+    When I run `bundle exec yard test-examples <glob>`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
     Examples:
       | glob        |
@@ -75,7 +75,7 @@ Feature: yard run-examples
       | app/app.rb  |
 
   Scenario: generates test names from unit name
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -109,14 +109,14 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples -v`
+    When I run `bundle exec yard test-examples -v`
     Then the output should contain "#sum"
     And the output should contain "A#sub"
     And the output should contain "B.multiply"
     And the output should contain "B#div"
 
   Scenario: fails if exception is raised
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -128,7 +128,7 @@ Feature: yard run-examples
         raise 'Fails with exception'
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the exit status should be 1
     And the output should contain "1) Error:"
     And the output should contain "#foo#test_0001_:"
@@ -136,7 +136,7 @@ Feature: yard run-examples
     And the output should contain "app/app.rb:4:"
 
   Scenario: asserts using equality
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -148,7 +148,7 @@ Feature: yard run-examples
         (one + two).to_s
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain:
       """
       --- expected
@@ -161,7 +161,7 @@ Feature: yard run-examples
       """
 
   Scenario: asserts exceptions
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -173,11 +173,11 @@ Feature: yard run-examples
         one / two
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario Outline: properly handles different return values
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -189,7 +189,7 @@ Feature: yard run-examples
         <value>
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
     And the output should not contain "DEPRECATED"
     Examples:
@@ -208,7 +208,7 @@ Feature: yard run-examples
       | 1.0   |
 
   Scenario Outline: properly handles case equality
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -220,7 +220,7 @@ Feature: yard run-examples
         'string'
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
     Examples:
       | value    |
@@ -229,7 +229,7 @@ Feature: yard run-examples
       | String   |
 
   Scenario: handles multiple @example tags
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -243,11 +243,11 @@ Feature: yard run-examples
         one + two
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "2 runs, 2 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: handles multiple return comments
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -261,11 +261,11 @@ Feature: yard run-examples
         one + two
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 2 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: runs @example tags without return comment
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -277,11 +277,11 @@ Feature: yard run-examples
         one + two
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 0 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: handles `# =>` return comment
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -293,11 +293,11 @@ Feature: yard run-examples
         one + two
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: handles return comment on newline
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -310,11 +310,11 @@ Feature: yard run-examples
         one + two
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: handles multiple lines
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -329,11 +329,11 @@ Feature: yard run-examples
         one + two
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: names test with example title when it's present
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -345,11 +345,11 @@ Feature: yard run-examples
         one + two
       end
       """
-    When I run `bundle exec yard run-examples -v`
+    When I run `bundle exec yard test-examples -v`
     Then the output should contain "#sum#test_0001_sums two numbers"
 
   Scenario: doesn't name test when title is not present
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -361,11 +361,11 @@ Feature: yard run-examples
         one + two
       end
       """
-    When I run `bundle exec yard run-examples -v`
+    When I run `bundle exec yard test-examples -v`
     Then the output should contain "#sum#test_0001_"
 
   Scenario: adds unit definition to backtrace on failures
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -377,11 +377,11 @@ Feature: yard run-examples
         one + two
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "app/app.rb:3"
 
   Scenario: has rake task to run the tests
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -395,18 +395,18 @@ Feature: yard run-examples
       """
     And a file named "Rakefile" with:
       """
-      require 'yard_example_runner/rake'
-      YardExampleRunner::RakeTask.new do |task|
-        task.run_examples_opts = %w[-v]
+      require 'yard_example_test/rake'
+      YardExampleTest::RakeTask.new do |task|
+        task.test_examples_opts = %w[-v]
         task.pattern = 'app/**/*.rb'
       end
       """
-    When I run `bundle exec rake yard:run-examples`
+    When I run `bundle exec rake yard:test-examples`
     Then the exit status should be 0
     And the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: propagates exit code to rake task
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -420,14 +420,14 @@ Feature: yard run-examples
       """
     And a file named "Rakefile" with:
       """
-      require 'yard_example_runner'
-      YardExampleRunner::RakeTask.new
+      require 'yard_example_test'
+      YardExampleTest::RakeTask.new
       """
-    When I run `bundle exec rake yard:run-examples`
+    When I run `bundle exec rake yard:test-examples`
     Then the exit status should be 1
 
-  Scenario Outline: requires example runner helper
-    Given a file named "<directory>/example_runner_helper.rb" with:
+  Scenario Outline: requires example test helper
+    Given a file named "<directory>/example_test_helper.rb" with:
       """
       require 'app/app'
 
@@ -447,7 +447,7 @@ Feature: yard run-examples
         one + two
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
     Examples:
       | directory |
@@ -457,7 +457,7 @@ Feature: yard run-examples
       | test      |
 
   Scenario: shares binding between asserts
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -481,11 +481,11 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "2 runs, 4 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: does not share binding between examples
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -501,15 +501,15 @@ Feature: yard run-examples
         one + two
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should match /NameError: undefined local variable or method [`']a'/
 
   Scenario: supports global hooks
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
 
-      YardExampleRunner.configure do |runner|
+      YardExampleTest.configure do |runner|
         runner.before { @flag = false  }
         runner.after { @flag = true  }
         runner.after_run { puts 'Run after all by minitest' }
@@ -523,21 +523,21 @@ Feature: yard run-examples
         @flag
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
     And the output should contain "Run after all by minitest"
 
   Scenario: supports test-name hooks
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
 
-      YardExampleRunner.before do
+      YardExampleTest.before do
         @flag = true
         @foo = true
       end
 
-      YardExampleRunner.before('#flag') do
+      YardExampleTest.before('#flag') do
         @flag = false
         @foo = false
       end
@@ -556,15 +556,15 @@ Feature: yard run-examples
         @foo && @flag
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "2 runs, 2 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: supports global and test-name hooks
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
 
-      YardExampleRunner.configure do |runner|
+      YardExampleTest.configure do |runner|
         runner.before { @one = true  }
         runner.before('#foo') { @two = true  }
       end
@@ -577,15 +577,15 @@ Feature: yard run-examples
         @one && @two
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: supports class-name hooks
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
 
-      YardExampleRunner.configure do |runner|
+      YardExampleTest.configure do |runner|
         runner.before('A') do
           @flag = true
         end
@@ -617,19 +617,19 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "3 runs, 3 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: supports test-name hooks for multiple examples on the same code object
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
 
-      YardExampleRunner.before('#flag') do
+      YardExampleTest.before('#flag') do
         @flag = true
       end
 
-      YardExampleRunner.before('#flag@Second example for flag') do
+      YardExampleTest.before('#flag@Second example for flag') do
         @flag = false
       end
       """
@@ -643,13 +643,13 @@ Feature: yard run-examples
         @flag
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "2 runs, 2 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: passes example to hooks to allow for inspection
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
-      YardExampleRunner.before do |example|
+      YardExampleTest.before do |example|
         require example.filepath.split(':').first
       end
       """
@@ -663,15 +663,15 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: can skip tests
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
 
-      YardExampleRunner.configure do |runner|
+      YardExampleTest.configure do |runner|
         runner.skip '#flag'
         runner.skip 'A.foo'
       end
@@ -692,15 +692,15 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "0 runs, 0 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: skips class names as substrings in class and method paths
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
 
-      YardExampleRunner.configure do |runner|
+      YardExampleTest.configure do |runner|
         runner.skip 'A'
       end
       """
@@ -730,15 +730,15 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: does not skip by named example qualifier
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
 
-      YardExampleRunner.configure do |runner|
+      YardExampleTest.configure do |runner|
         runner.skip 'A.value@Second example'
       end
       """
@@ -755,11 +755,11 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "2 runs, 2 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: allows binding to local context
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -774,15 +774,15 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: shares instance variables in local context binding
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
 
-      YardExampleRunner.before do
+      YardExampleTest.before do
         @flag = true
       end
       """
@@ -795,11 +795,11 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: isolates constants per test
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -823,11 +823,11 @@ Feature: yard run-examples
       class App
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "2 runs, 8 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: allows to run a single test
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -844,13 +844,13 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples -v --name=/First/`
+    When I run `bundle exec yard test-examples -v --name=/First/`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
-    When I run `bundle exec yard run-examples -v --name=/Second/`
+    When I run `bundle exec yard test-examples -v --name=/Second/`
     Then the output should contain "1 runs, 1 assertions, 1 failures, 0 errors, 0 skips"
 
   Scenario: ignores files excluded in .yardopts
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       require 'lib/lib'
@@ -873,14 +873,14 @@ Feature: yard run-examples
       """
     And a file named ".yardopts" with:
       """
-      --plugin yard_example_runner
+      --plugin yard_example_test
       --exclude lib/lib.rb
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 0 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: shows exception when assert raises one
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -892,7 +892,7 @@ Feature: yard run-examples
         raise 'Fails with exception'
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the exit status should be 1
     And the output should contain "1) Error:"
     And the output should contain "#foo#test_0001_:"
@@ -900,7 +900,7 @@ Feature: yard run-examples
     And the output should contain "app/app.rb:4:"
 
   Scenario: handles a proc successfully
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
       """
@@ -910,17 +910,17 @@ Feature: yard run-examples
       #   MyClass.call #=> 1
       MyClass = lambda { 1 }
       """
-      When I run `bundle exec yard run-examples`
+      When I run `bundle exec yard test-examples`
       Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: supports RSpec value matchers on the right side of #=>
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'rspec/expectations'
       require 'rspec/matchers'
       require 'app/app'
 
-      YardExampleRunner::Example.include RSpec::Matchers
+      YardExampleTest::Example.include RSpec::Matchers
       """
     And a file named "app/app.rb" with:
       """
@@ -944,17 +944,17 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "3 runs, 3 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: supports RSpec block matchers on the right side of #=>
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'rspec/expectations'
       require 'rspec/matchers'
       require 'app/app'
 
-      YardExampleRunner::Example.include RSpec::Matchers
+      YardExampleTest::Example.include RSpec::Matchers
       """
     And a file named "app/app.rb" with:
       """
@@ -969,11 +969,11 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "2 runs, 2 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: supports custom matchers implementing the matches? protocol
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
 
@@ -1002,11 +1002,11 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: supports custom block matchers via supports_block_expectations?
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'app/app'
 
@@ -1041,11 +1041,11 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
 
   Scenario: properly supports calculating coverage
-    Given a file named "example_runner_helper.rb" with:
+    Given a file named "example_test_helper.rb" with:
       """
       require 'simplecov'
 
@@ -1063,6 +1063,6 @@ Feature: yard run-examples
         end
       end
       """
-    When I run `bundle exec yard run-examples`
+    When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 1 assertions, 0 failures, 0 errors, 0 skips"
     And the output should contain "100.0%"

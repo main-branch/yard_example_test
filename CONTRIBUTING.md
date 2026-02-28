@@ -45,12 +45,12 @@ You can contribute in the following ways:
 
 ## How to report an issue or request a feature
 
-`yard_example_runner` uses [GitHub
+`yard_example_test` uses [GitHub
 Issues](https://docs.github.com/issues/tracking-your-work-with-issues/about-issues)
 for issue tracking and feature requests.
 
-To report an issue or request a feature, please [create a `yard_example_runner`
-GitHub issue](https://github.com/main-branch/yard_example_runner/issues/new). Fill in
+To report an issue or request a feature, please [create a `yard_example_test`
+GitHub issue](https://github.com/main-branch/yard_example_test/issues/new). Fill in
 the template as thoroughly as possible to describe the issue or feature request.
 
 ## How to submit a code or documentation change
@@ -64,7 +64,7 @@ There is a three-step process for submitting code or documentation changes:
 
 ### Commit message guidelines
 
-The `yard_example_runner` project has adopted the [Conventional Commits
+The `yard_example_test` project has adopted the [Conventional Commits
 standard](https://www.conventionalcommits.org/en/v1.0.0/) for all commit messages.
 
 This structured approach to commit messages allows us to:
@@ -107,7 +107,7 @@ Examples of valid commits:
 Commits that include breaking changes must include an exclamation mark before the
 colon:
 
-- `feat!: renamed YardExampleRunner::Runner to YardExampleRunner::ExampleRunner`
+- `feat!: renamed YardExampleTest::Tester to YardExampleTest::ExampleTester`
 
 The commit messages will drive how the version is incremented for each release:
 
@@ -232,6 +232,6 @@ bundle exec rake
 
 ## Licensing
 
-`yard_example_runner` uses [the MIT
+`yard_example_test` uses [the MIT
 license](https://choosealicense.com/licenses/mit/) as declared in the
 [LICENSE](LICENSE.txt) file.

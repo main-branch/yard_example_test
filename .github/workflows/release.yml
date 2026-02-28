@@ -21,7 +21,7 @@ jobs:
 
     environment:
       name: RubyGems
-      url: https://rubygems.org/gems/yard_example_runner
+      url: https://rubygems.org/gems/yard_example_test
 
     permissions:
       contents: write

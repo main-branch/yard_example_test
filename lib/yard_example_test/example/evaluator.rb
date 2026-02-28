@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module YardExampleRunner
+module YardExampleTest
   class Example < ::Minitest::Spec
     # Manages binding creation and code evaluation for example expressions
     #
@@ -135,7 +135,7 @@ module YardExampleRunner
       #
       def transplant_instance_variables(ctx)
         @instance_variables.each do |ivar, value|
-          local = "__yard_example_runner__#{ivar.to_s.delete('@')}"
+          local = "__yard_example_test__#{ivar.to_s.delete('@')}"
           ctx.local_variable_set(local, value)
           ctx.eval("#{ivar} = #{local}")
         end

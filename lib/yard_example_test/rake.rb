@@ -3,15 +3,15 @@
 require 'rake'
 require 'rake/tasklib'
 
-module YardExampleRunner
+module YardExampleTest
   # Rake task for running YARD @example tags as tests.
   #
   # @example Define the task with defaults
-  #   YardExampleRunner::RakeTask.new
+  #   YardExampleTest::RakeTask.new
   #
   # @example Define the task with custom options
-  #   YardExampleRunner::RakeTask.new do |task|
-  #     task.run_examples_opts = %w[-v]
+  #   YardExampleTest::RakeTask.new do |task|
+  #     task.test_examples_opts = %w[-v]
   #     task.pattern = 'app/**/*.rb'
   #   end
   #
@@ -21,28 +21,28 @@ module YardExampleRunner
     # The name of the Rake task
     #
     # @example
-    #   task = YardExampleRunner::RakeTask.new
-    #   task.name #=> 'yard:run-examples'
+    #   task = YardExampleTest::RakeTask.new
+    #   task.name #=> 'yard:test-examples'
     #
     # @return [String] the task name
     #
     attr_accessor :name
 
-    # Options passed to the +yard run-examples+ command
+    # Options passed to the +yard test-examples+ command
     #
     # @example
-    #   task = YardExampleRunner::RakeTask.new
-    #   task.run_examples_opts = %w[-v]
-    #   task.run_examples_opts #=> ['-v']
+    #   task = YardExampleTest::RakeTask.new
+    #   task.test_examples_opts = %w[-v]
+    #   task.test_examples_opts #=> ['-v']
     #
     # @return [Array<String>] the command-line options
     #
-    attr_accessor :run_examples_opts
+    attr_accessor :test_examples_opts
 
-    # Glob pattern for files to pass to +yard run-examples+
+    # Glob pattern for files to pass to +yard test-examples+
     #
     # @example
-    #   task = YardExampleRunner::RakeTask.new
+    #   task = YardExampleTest::RakeTask.new
     #   task.pattern = 'app/**/*.rb'
     #   task.pattern #=> 'app/**/*.rb'
     #
@@ -53,8 +53,8 @@ module YardExampleRunner
     # Creates and registers the Rake task
     #
     # @example
-    #   YardExampleRunner::RakeTask.new do |task|
-    #     task.run_examples_opts = %w[-v]
+    #   YardExampleTest::RakeTask.new do |task|
+    #     task.test_examples_opts = %w[-v]
     #     task.pattern = 'app/**/*.rb'
     #   end
     #
@@ -64,10 +64,10 @@ module YardExampleRunner
     #
     # @return [void]
     #
-    def initialize(name = 'yard:run-examples')
+    def initialize(name = 'yard:test-examples')
       super()
       @name = name
-      @run_examples_opts = []
+      @test_examples_opts = []
       @pattern = ''
       yield self if block_given?
       define
@@ -84,8 +84,8 @@ module YardExampleRunner
     def define
       desc 'Run YARD @example tags as tests'
       task(name) do
-        args = run_examples_opts + (pattern.empty? ? [] : [pattern])
-        abort unless system('yard', 'run-examples', *args)
+        args = test_examples_opts + (pattern.empty? ? [] : [pattern])
+        abort unless system('yard', 'test-examples', *args)
       end
     end
   end

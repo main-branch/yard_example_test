@@ -3,14 +3,14 @@
 # @title README
 -->
 
-# yard_example_runner
+# yard_example_test
 
-![Gem Version](https://img.shields.io/gem/v/yard_example_runner?label=gem%20version&color=green)
-[![Continuous Integration](https://github.com/main-branch/yard_example_runner/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/main-branch/yard_example_runner/actions/workflows/continuous-integration.yml)
-[![YARD Docs](https://img.shields.io/badge/docs-rubydoc.info-green.svg)](https://www.rubydoc.info/gems/yard_example_runner)
+![Gem Version](https://img.shields.io/gem/v/yard_example_test?label=gem%20version&color=green)
+[![Continuous Integration](https://github.com/main-branch/yard_example_test/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/main-branch/yard_example_test/actions/workflows/continuous-integration.yml)
+[![YARD Docs](https://img.shields.io/badge/docs-rubydoc.info-green.svg)](https://www.rubydoc.info/gems/yard_example_test)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.txt)
 
-`YardExampleRunner` is a YARD plugin that automatically parses `@example` tags in
+`YardExampleTest` is a YARD plugin that automatically parses `@example` tags in
 your documentation and executes them as tests ensuring code examples remain
 accurate and serve as a living, executable specification.
 
@@ -43,16 +43,16 @@ created by [Alex Rodionov](https://github.com/p0deje) and contributors.
 
 ## Installation
 
-Add `yard_example_runner` as a development dependency:
+Add `yard_example_test` as a development dependency:
 
 ```bash
-bundle add yard_example_runner --group development
+bundle add yard_example_test --group development
 ```
 
 Or add it manually to your Gemfile and run `bundle install`:
 
 ```ruby
-gem 'yard_example_runner', group: :development
+gem 'yard_example_test', group: :development
 ```
 
 ## Basic usage
@@ -120,23 +120,23 @@ class Circle
 end
 ```
 
-First, tell YARD to automatically load `yard_example_runner` by adding it as a plugin
+First, tell YARD to automatically load `yard_example_test` by adding it as a plugin
 in your `.yardopts`:
 
 ```text
 # .yardopts
---plugin yard_example_runner
+--plugin yard_example_test
 ```
 
 Next, create a test helper that loads everything your examples need to run. It serves
 a similar purpose to `spec_helper.rb` in RSpec or `test_helper.rb` in Minitest:
 
 ```bash
-touch example_runner_helper.rb
+touch example_test_helper.rb
 ```
 
 ```ruby
-# example_runner_helper.rb
+# example_test_helper.rb
 require 'lib/rectangle'
 require 'lib/circle'
 ```
@@ -144,7 +144,7 @@ require 'lib/circle'
 Now run your examples:
 
 ```bash
-$ bundle exec yard run-examples
+$ bundle exec yard test-examples
 Run options: --seed 5974
 
 # Running:
@@ -166,7 +166,7 @@ command again:
 
 ```bash
 $ sed -i.bak "s/#=> 'rectangle'/#=> 'circle'/" lib/circle.rb
-$ bundle exec yard run-examples
+$ bundle exec yard test-examples
 Run options: --seed 51966
 
 # Running:
@@ -202,7 +202,7 @@ end
 This runs as a single test with multiple expectation operators:
 
 ```bash
-$ bundle exec yard run-examples lib/rectangle.rb
+$ bundle exec yard test-examples lib/rectangle.rb
 # ...
 1 runs, 2 assertions, 0 failures, 0 errors, 0 skips
 ```
@@ -222,7 +222,7 @@ end
 ```
 
 ```bash
-$ bundle exec yard run-examples lib/rectangle.rb
+$ bundle exec yard test-examples lib/rectangle.rb
 # ...
 1 runs, 0 assertions, 0 failures, 0 errors, 0 skips
 ```
@@ -258,10 +258,10 @@ regex on the message — see [RSpec matchers](#rspec-matchers), which supports
 ### Shared example context
 
 Shared example context is about making objects and methods available to examples. The
-`example_runner_helper.rb` file introduced in [Basic usage](#basic-usage) is loaded
+`example_test_helper.rb` file introduced in [Basic usage](#basic-usage) is loaded
 before examples execute. Place shared helper methods there (or in
-`support/example_runner_helper.rb`, `spec/example_runner_helper.rb`, or
-`test/example_runner_helper.rb`).
+`support/example_test_helper.rb`, `spec/example_test_helper.rb`, or
+`test/example_test_helper.rb`).
 
 For instance, if an example references an object without constructing it:
 
@@ -278,7 +278,7 @@ end
 Running this will fail because `rect` is not defined in the example:
 
 ```bash
-$ bundle exec yard run-examples
+$ bundle exec yard test-examples
   # ...
   1) Error:
 Rectangle#area#test_0001_Area of a shared rectangle:
@@ -286,11 +286,11 @@ NameError: undefined local variable or method `rect' for Object:Class
   # ...
 ```
 
-Define `rect` as a memoized method in `example_runner_helper.rb` to make it available
+Define `rect` as a memoized method in `example_test_helper.rb` to make it available
 across all examples:
 
 ```ruby
-# example_runner_helper.rb
+# example_test_helper.rb
 require 'lib/rectangle'
 require 'lib/circle'
 
@@ -302,11 +302,11 @@ end
 ### Hooks
 
 Hooks are lifecycle callbacks that run around each example, providing setup and
-teardown behavior. They are defined in `example_runner_helper.rb` using
-`YardExampleRunner.configure`:
+teardown behavior. They are defined in `example_test_helper.rb` using
+`YardExampleTest.configure`:
 
 ```ruby
-YardExampleRunner.configure do |runner|
+YardExampleTest.configure do |runner|
   runner.before do
     # Runs before each example.
     # Evaluated in the same context as the example,
@@ -330,7 +330,7 @@ Hooks can be scoped to a specific class, method, or named example by passing a
 qualifier string:
 
 ```ruby
-YardExampleRunner.configure do |runner|
+YardExampleTest.configure do |runner|
   runner.before('MyClass') do
     # Runs before every example in `MyClass` and its methods
     # (e.g. `MyClass.foo`, `MyClass#bar`)
@@ -349,12 +349,12 @@ end
 ### Skipping examples
 
 Examples can be excluded from a run by passing a class or method qualifier to
-`runner.skip` in `example_runner_helper.rb`. The qualifier is matched as a substring
+`runner.skip` in `example_test_helper.rb`. The qualifier is matched as a substring
 of the example's class/method path, so skipping a class also skips all of its
 methods:
 
 ```ruby
-YardExampleRunner.configure do |runner|
+YardExampleTest.configure do |runner|
   runner.skip 'MyClass'     # skips all examples in `MyClass` and its methods
   runner.skip 'MyClass#foo' # skips all examples for `MyClass#foo` only
 end
@@ -383,14 +383,14 @@ Add `rspec-expectations` as a development dependency:
 gem 'rspec-expectations', group: :development
 ```
 
-Include `RSpec::Matchers` in `example_runner_helper.rb`:
+Include `RSpec::Matchers` in `example_test_helper.rb`:
 
 ```ruby
-# example_runner_helper.rb
+# example_test_helper.rb
 require 'rspec/expectations'
 require 'rspec/matchers'
 
-YardExampleRunner::Example.include RSpec::Matchers
+YardExampleTest::Example.include RSpec::Matchers
 ```
 
 ##### Value matchers
@@ -441,21 +441,21 @@ class's namespace, so matchers like `include` are never shadowed by Ruby's built
 If you prefer to stay within the Minitest ecosystem, gems like
 [minitest-matchers](https://github.com/wojtekmach/minitest-matchers) and
 [minitest-matchers_vaccine](https://github.com/rmm5t/minitest-matchers_vaccine)
-can be used alongside `yard_example_runner`. Add one as a development dependency:
+can be used alongside `yard_example_test`. Add one as a development dependency:
 
 ```ruby
 gem 'minitest-matchers_vaccine', group: :development
 ```
 
-If you use `minitest-matchers_vaccine`, require it in `example_runner_helper.rb`:
+If you use `minitest-matchers_vaccine`, require it in `example_test_helper.rb`:
 
 ```ruby
-# example_runner_helper.rb
+# example_test_helper.rb
 require 'minitest/matchers_vaccine'
 ```
 
-`yard_example_runner` does not require including a matcher module on
-`YardExampleRunner::Example`. Any matcher object that follows the `matches?` /
+`yard_example_test` does not require including a matcher module on
+`YardExampleTest::Example`. Any matcher object that follows the `matches?` /
 `failure_message` protocol is recognized automatically.
 
 #### Custom matchers
@@ -464,7 +464,7 @@ Any object that responds to `matches?` works as a matcher.
 No external dependencies are required:
 
 ```ruby
-# example_runner_helper.rb
+# example_test_helper.rb
 class BePositive
   def matches?(actual)
     @actual = actual
@@ -492,7 +492,7 @@ end
 ```
 
 Block matchers additionally respond to `supports_block_expectations?` returning
-`true`, which tells `yard_example_runner` to wrap the actual expression in a proc
+`true`, which tells `yard_example_test` to wrap the actual expression in a proc
 before passing it to `matches?`.
 
 ### Rake task
@@ -501,16 +501,16 @@ A Rake task is available for integrating example runs into your build pipeline:
 
 ```ruby
 # Rakefile
-require 'yard_example_runner/rake'
+require 'yard_example_test/rake'
 
-YardExampleRunner::RakeTask.new do |task|
-  task.run_examples_opts = %w[-v]
+YardExampleTest::RakeTask.new do |task|
+  task.test_examples_opts = %w[-v]
   task.pattern = 'lib/**/*.rb'
 end
 ```
 
 ```bash
-bundle exec rake yard:run-examples
+bundle exec rake yard:test-examples
 ```
 
 ## Contributing
