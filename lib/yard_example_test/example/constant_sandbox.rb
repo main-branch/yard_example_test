@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module YardExampleRunner
+module YardExampleTest
   class Example < ::Minitest::Spec
     # Isolates constant definitions introduced during example evaluation
     #

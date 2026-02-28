@@ -21,5 +21,5 @@ channels (such as mailing lists, submitted patches, commit comments, etc.).
 - Behavior that can reasonably be considered harassment will not be tolerated.
 
 Report violations to the maintainers by [opening an
-issue](https://github.com/main-branch/yard_example_runner/issues/new) or contacting a
+issue](https://github.com/main-branch/yard_example_test/issues/new) or contacting a
 [maintainer](MAINTAINERS.md) privately.

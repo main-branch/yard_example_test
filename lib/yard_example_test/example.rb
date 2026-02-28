@@ -4,11 +4,11 @@ require_relative 'example/constant_sandbox'
 require_relative 'example/evaluator'
 require_relative 'example/comparison'
 
-module YardExampleRunner
+module YardExampleTest
   # Represents a YARD +@example+ tag as a runnable +Minitest::Spec+
   #
   # Each instance is populated from a single +@example+ tag by
-  # {YARD::CLI::RunExamples#build_spec} and holds everything needed to
+  # {YARD::CLI::TestExamples#build_spec} and holds everything needed to
   # generate and execute a test:
   #
   # - {#definition} — the YARD path of the documented object
@@ -35,7 +35,7 @@ module YardExampleRunner
   # +eval+), constant isolation is handled by {ConstantSandbox}, and
   # assertion / matcher logic lives in the {Comparison} module.
   #
-  # @see YARD::CLI::RunExamples
+  # @see YARD::CLI::TestExamples
   #
   # @see Expectation
   #
@@ -75,7 +75,7 @@ module YardExampleRunner
     # @example
     #   example.expectations #=> []
     #
-    # @return [Array<YardExampleRunner::Expectation>] expectations to be verified
+    # @return [Array<YardExampleTest::Expectation>] expectations to be verified
     #
     # @api public
     attr_accessor :expectations
@@ -85,15 +85,15 @@ module YardExampleRunner
     # Creates an anonymous subclass of this class and evaluates a +describe+/+it+
     # block inside it. The steps are:
     #
-    # 1. Calls +load_helpers+ to require any +example_runner_helper+ files found in
+    # 1. Calls +load_helpers+ to require any +example_test_helper+ files found in
     #    +.+, +support/+, +spec/+, or +test/+.
-    # 2. Skips silently if {YardExampleRunner.skips} contains a substring that
+    # 2. Skips silently if {YardExampleTest.skips} contains a substring that
     #    matches {#definition}.
     # 3. Opens a +describe+ block keyed on {#definition}, which becomes the spec
     #    group name reported by Minitest.
     # 4. Registers any matching +before+/+after+ hooks via +register_hooks+. These
-    #    are registered by the user with {YardExampleRunner.before} and
-    #    {YardExampleRunner.after}.
+    #    are registered by the user with {YardExampleTest.before} and
+    #    {YardExampleTest.after}.
     # 5. Opens an +it+ block keyed on +name+ (the +@example+ tag title) that calls
     #    +run_expectations+ to evaluate every {Expectation} in {#expectations}.
     #
@@ -113,7 +113,7 @@ module YardExampleRunner
       this = self
       Class.new(this.class).class_eval do
         describe this.definition do
-          register_hooks(example_name_for(this), YardExampleRunner.hooks, this)
+          register_hooks(example_name_for(this), YardExampleTest.hooks, this)
           it(this.name) { run_expectations(this) }
         end
       end
@@ -123,7 +123,7 @@ module YardExampleRunner
 
     # Returns +true+ if this example's {#definition} matches any skip pattern
     #
-    # Iterates over {YardExampleRunner.skips} and returns +true+ as soon as a
+    # Iterates over {YardExampleTest.skips} and returns +true+ as soon as a
     # pattern is found that is a substring of {#definition}. Used by {#generate}
     # to bail out before registering any +Minitest::Spec+ subclass.
     #
@@ -135,7 +135,7 @@ module YardExampleRunner
     # @api private
     #
     def skipped?
-      YardExampleRunner.skips.any? { |skip| definition.include?(skip) }
+      YardExampleTest.skips.any? { |skip| definition.include?(skip) }
     end
 
     # Evaluates every {Expectation} in the given example
@@ -299,7 +299,7 @@ module YardExampleRunner
     class << self
       protected
 
-      # Requires any +example_runner_helper+ files found in known directories
+      # Requires any +example_test_helper+ files found in known directories
       #
       # @example
       #   load_helpers
@@ -310,7 +310,7 @@ module YardExampleRunner
       #
       def load_helpers
         %w[. support spec test].each do |dir|
-          require "#{dir}/example_runner_helper" if File.exist?("#{dir}/example_runner_helper.rb")
+          require "#{dir}/example_test_helper" if File.exist?("#{dir}/example_test_helper.rb")
         end
       end
 
@@ -340,7 +340,7 @@ module YardExampleRunner
       # @param example [Example] the example being registered
       #
       # @example
-      #   register_hooks('Foo#bar', YardExampleRunner.hooks, example)
+      #   register_hooks('Foo#bar', YardExampleTest.hooks, example)
       #
       # @return [void]
       #

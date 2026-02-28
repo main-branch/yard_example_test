@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-version = File.read(File.expand_path('lib/yard_example_runner/version.rb', __dir__)).match(/VERSION = ['"](.*?)['"]/)[1]
+version = File.read(File.expand_path('lib/yard_example_test/version.rb', __dir__)).match(/VERSION = ['"](.*?)['"]/)[1]
 
 Gem::Specification.new do |spec|
-  spec.name         = 'yard_example_runner'
+  spec.name         = 'yard_example_test'
   spec.summary      = 'A YARD plugin that executes @example tag code as tests'
-  spec.description  = 'yard_example_runner parses @example tags from YARD documentation and ' \
+  spec.description  = 'yard_example_test parses @example tags from YARD documentation and ' \
                       'executes them as tests, ensuring code examples remain accurate ' \
                       'and serve as a living, executable specification.'
   spec.author       = 'James Couball'
   spec.email        = 'jcouball@yahoo.com'
-  spec.homepage     = 'https://github.com/main-branch/yard_example_runner'
+  spec.homepage     = 'https://github.com/main-branch/yard_example_test'
   spec.license      = 'MIT'
   spec.version      = version
 

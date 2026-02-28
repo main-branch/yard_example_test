@@ -74,7 +74,7 @@ owner becomes inactive, their ownership is paused alongside other permissions.
 To avoid single points of failure:
 
 - At least two active maintainers should have RubyGems ownership for the
-  `yard_example_runner` gem.
+  `yard_example_test` gem.
 - At least two active maintainers should have GitHub org Owner or repo Admin access.
 
 If thresholds drop below these levels, remaining maintainers should prioritize

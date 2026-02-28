@@ -4,20 +4,20 @@ require 'yard'
 require 'minitest'
 require 'minitest/spec'
 
-require_relative 'yard/cli/run_examples'
-require_relative 'yard_example_runner/example'
-require_relative 'yard_example_runner/expectation'
-require_relative 'yard_example_runner/version'
+require_relative 'yard/cli/test_examples'
+require_relative 'yard_example_test/example'
+require_relative 'yard_example_test/expectation'
+require_relative 'yard_example_test/version'
 
 # Provides configuration and hooks for running YARD @example tags as tests.
 #
 # @api public
 #
-module YardExampleRunner
-  # Configures YardExampleRunner
+module YardExampleTest
+  # Configures YardExampleTest
   #
   # @example
-  #   YardExampleRunner.configure do |runner|
+  #   YardExampleTest.configure do |runner|
   #     runner.before { @value = 1 }
   #     runner.after { puts 'done' }
   #   end
@@ -37,10 +37,10 @@ module YardExampleRunner
   # The block is evaluated in the same context as the example.
   #
   # @example Register a global before hook
-  #   YardExampleRunner.before { @value = 1 }
+  #   YardExampleTest.before { @value = 1 }
   #
   # @example Register a hook for a specific test
-  #   YardExampleRunner.before('#my_method') { @value = 42 }
+  #   YardExampleTest.before('#my_method') { @value = 42 }
   #
   # @param test [String, nil] the test name to match, or +nil+ for all tests
   #
@@ -59,10 +59,10 @@ module YardExampleRunner
   # The block is evaluated in the same context as the example.
   #
   # @example Register a global after hook
-  #   YardExampleRunner.after { puts 'done' }
+  #   YardExampleTest.after { puts 'done' }
   #
   # @example Register a hook for a specific test
-  #   YardExampleRunner.after('#my_method') { puts 'my_method done' }
+  #   YardExampleTest.after('#my_method') { puts 'my_method done' }
   #
   # @param test [String, nil] the test name to match, or +nil+ for all tests
   #
@@ -82,7 +82,7 @@ module YardExampleRunner
   # to +Minitest.after_run+.
   #
   # @example
-  #   YardExampleRunner.after_run { puts 'All examples finished' }
+  #   YardExampleTest.after_run { puts 'All examples finished' }
   #
   # @return [void]
   #
@@ -95,7 +95,7 @@ module YardExampleRunner
   # Registers a test definition to be skipped
   #
   # @example
-  #   YardExampleRunner.skip '#my_method'
+  #   YardExampleTest.skip '#my_method'
   #
   # @param test [String] the test name or definition path to skip
   #
@@ -131,4 +131,4 @@ module YardExampleRunner
   end
 end
 
-YARD::CLI::CommandParser.commands[:'run-examples'] = YARD::CLI::RunExamples
+YARD::CLI::CommandParser.commands[:'test-examples'] = YARD::CLI::TestExamples

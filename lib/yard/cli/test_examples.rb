@@ -12,17 +12,17 @@
 module YARD
   # Namespace for command-line interface components provided by the `yard` gem
   #
-  # This gem reopens {YARD::CLI} to add the {YARD::CLI::RunExamples} command.
+  # This gem reopens {YARD::CLI} to add the {YARD::CLI::TestExamples} command.
   #
   # @api private
   #
   # @see https://rubydoc.info/docs/yard/YARD/CLI YARD::CLI
   #
   module CLI
-    # Implements the +yard run-examples+ command
+    # Implements the +yard test-examples+ command
     #
     # Registered with YARD's command dispatcher so that running
-    # +yard run-examples [paths...] [options]+ invokes {#run}. The full
+    # +yard test-examples [paths...] [options]+ invokes {#run}. The full
     # pipeline is:
     #
     # 1. {#parse_files} — expand the given paths/globs into +.rb+ file paths,
@@ -31,18 +31,18 @@ module YARD
     #    +@example+ tag from the registry.
     # 3. {#add_pwd_to_path} — ensure the current working directory is on
     #    +$LOAD_PATH+ so that +require+ calls inside examples resolve correctly.
-    # 4. {#generate_tests} — convert each tag into a {YardExampleRunner::Example}
+    # 4. {#generate_tests} — convert each tag into a {YardExampleTest::Example}
     #    and register it as a +Minitest::Spec+.
     # 5. {#run_tests} — schedule the specs to run via +Minitest.autorun+ when
     #    the process exits.
     #
-    # @see YardExampleRunner::Example
+    # @see YardExampleTest::Example
     #
-    # @see YardExampleRunner::Expectation
+    # @see YardExampleTest::Expectation
     #
     # @api private
     #
-    class RunExamples < Command
+    class TestExamples < Command
       # Returns the one-line description of the command shown in +yard help+
       #
       # @return [String] the description string
@@ -153,7 +153,7 @@ module YARD
 
       # Generates an in-memory Minitest spec for each +@example+ tag
       #
-      # Calls {#build_spec} to construct a {YardExampleRunner::Example} for
+      # Calls {#build_spec} to construct a {YardExampleTest::Example} for
       # each tag, then calls +generate+ on it, which dynamically defines and
       # registers an anonymous +Minitest::Spec+ subclass. The registered specs
       # are held in memory by Minitest and executed when {#run_tests} triggers
@@ -170,9 +170,9 @@ module YARD
         end
       end
 
-      # Builds a {YardExampleRunner::Example} from a YARD +@example+ tag
+      # Builds a {YardExampleTest::Example} from a YARD +@example+ tag
       #
-      # Constructs a new {YardExampleRunner::Example} and populates it with
+      # Constructs a new {YardExampleTest::Example} and populates it with
       # the metadata needed to generate and run a Minitest spec:
       #
       # - +name+ — the title from the +@example+ tag (e.g. +"Adding two numbers"+),
@@ -188,11 +188,11 @@ module YARD
       # @param example [YARD::Tags::Tag] a single +@example+ tag whose +object+,
       #   +name+, and +text+ attributes will be used to populate the spec
       #
-      # @return [YardExampleRunner::Example] the populated example object, ready
+      # @return [YardExampleTest::Example] the populated example object, ready
       #   to have +generate+ called on it
       #
       def build_spec(example)
-        YardExampleRunner::Example.new(example.name).tap do |spec|
+        YardExampleTest::Example.new(example.name).tap do |spec|
           spec.definition = example.object.path
           spec.filepath = "#{Dir.pwd}/#{example.object.files.first.join(':')}"
           spec.expectations = extract_expectations(example)
@@ -202,7 +202,7 @@ module YARD
       # Parses the body of a YARD +@example+ tag into expectations
       #
       # Parses the body of a YARD +@example+ tag into a list of
-      # {YardExampleRunner::Expectation} objects
+      # {YardExampleTest::Expectation} objects
       #
       # The example body is first normalized by {#normalize_example_lines}, which
       # puts each +#=>+ annotation on its own line and strips whitespace. The
@@ -212,7 +212,7 @@ module YARD
       #    +actual+ Ruby expression.
       # 2. The +#=>+ line that follows (if any) is stripped of its prefix and
       #    whitespace to form the +expected+ value string.
-      # 3. An {YardExampleRunner::Expectation} is appended to the result array and
+      # 3. An {YardExampleTest::Expectation} is appended to the result array and
       #    the process repeats.
       #
       # If a chunk of code lines has no following +#=>+ line, +expected+ is set to
@@ -231,7 +231,7 @@ module YARD
       # @param example [YARD::Tags::Tag] the +@example+ tag whose +text+ body will be
       #   parsed into expectations
       #
-      # @return [Array<YardExampleRunner::Expectation>] one +Expectation+ per +#=>+
+      # @return [Array<YardExampleTest::Expectation>] one +Expectation+ per +#=>+
       #   annotation found in the example body; each holds:
       #   - +actual+ [String] — one or more lines of Ruby code to evaluate
       #   - +expected+ [String, nil] — the expected return value, or +nil+ if the
@@ -244,7 +244,7 @@ module YARD
             actual = lines.take_while { |l| l !~ /^#=>/ }
             expected = lines[actual.size]&.sub('#=>', '')&.strip
             lines.slice! 0..actual.size
-            arr << YardExampleRunner::Expectation.new(actual: actual.join("\n"), expected: expected)
+            arr << YardExampleTest::Expectation.new(actual: actual.join("\n"), expected: expected)
           end
         end
       end
@@ -279,7 +279,7 @@ module YARD
       #
       # Calls +Minitest.autorun+, which registers an +at_exit+ hook. That hook
       # calls +Minitest.run+ and then fires any callbacks registered via
-      # +Minitest.after_run+ (including {YardExampleRunner.after_run} blocks).
+      # +Minitest.after_run+ (including {YardExampleTest.after_run} blocks).
       #
       # +Minitest.autorun+ is used rather than calling +Minitest.run+ directly
       # because +Minitest.after_run+ callbacks are only invoked inside
@@ -295,7 +295,7 @@ module YARD
       # Adds the current working directory to Ruby's load path if not present
       #
       # Example code in +@example+ tags is evaluated in the same Ruby process
-      # as +yard run-examples+. That code commonly uses +require+ to load the
+      # as +yard test-examples+. That code commonly uses +require+ to load the
       # project's own files (e.g. +require 'lib/my_class'+), but Ruby's default
       # +$LOAD_PATH+ does not include the current working directory. Without
       # this, those +require+ calls would raise +LoadError+.
