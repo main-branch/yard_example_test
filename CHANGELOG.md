@@ -5,6 +5,23 @@
 
 # Changelog
 
+## [0.2.0](https://github.com/main-branch/yard_example_test/compare/v0.1.1...v0.2.0) (2026-02-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* the gem name, module name, CLI command, rake task name, and helper filename have all changed
+
+### Features
+
+* Rename project from yard_example_runner to yard_example_test ([7ce19cd](https://github.com/main-branch/yard_example_test/commit/7ce19cddac78716ff9bcc427835abbdd4c666f30))
+
+
+### Other Changes
+
+* Add and update README badges ([4d867c5](https://github.com/main-branch/yard_example_test/commit/4d867c546cf925bef2cf8bd305ea52ccb3d01ed2))
+* Improve README terminology and consistency ([e0f4b9c](https://github.com/main-branch/yard_example_test/commit/e0f4b9c9f67ccdfb5d50834fcbec3ece640c2223))
+
 ## [0.1.1](https://github.com/main-branch/yard_example_test/compare/v0.1.0...v0.1.1) (2026-02-27)
 
 
