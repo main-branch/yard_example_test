@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         # Only tested on non-EOL Ruby versions
-        ruby: ["3.3", "3.4", "4.0"]
+        ruby: ["3.2", "3.3", "3.4", "4.0"]
         operating-system: [ubuntu-latest]
         experimental: [No]
 
