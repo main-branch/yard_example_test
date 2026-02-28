@@ -5,6 +5,13 @@
 
 # Changelog
 
+## [0.2.1](https://github.com/main-branch/yard_example_test/compare/v0.2.0...v0.2.1) (2026-02-28)
+
+
+### Bug Fixes
+
+* Downgrade minimum Ruby version support from 3.3.x to 3.2.x ([aae018d](https://github.com/main-branch/yard_example_test/commit/aae018d7c7bf822df1edf34d0a3221a466616af9))
+
 ## [0.2.0](https://github.com/main-branch/yard_example_test/compare/v0.1.1...v0.2.0) (2026-02-28)
 
 
