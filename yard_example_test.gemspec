@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.metadata['rubygems_mfa_required'] = 'true'
 
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 3.3.0'
+  spec.required_ruby_version = '>= 3.2.0'
 
   spec.add_dependency 'minitest', '~> 6.0'
   spec.add_dependency 'yard', '~> 0.9'

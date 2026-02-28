@@ -24,4 +24,4 @@ Metrics/BlockLength:
     - "*.gemspec"
 
 AllCops:
-  TargetRubyVersion: 3.3
+  TargetRubyVersion: 3.2
