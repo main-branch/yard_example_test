@@ -5,6 +5,13 @@
 
 # Changelog
 
+## [0.2.2](https://github.com/main-branch/yard_example_test/compare/v0.2.1...v0.2.2) (2026-04-24)
+
+
+### Other Changes
+
+* **dependencies:** Update dependencies for all GitHub Actions workflows ([5c42d4b](https://github.com/main-branch/yard_example_test/commit/5c42d4bc7d758737aa3d1a247adb39cf97107045))
+
 ## [0.2.1](https://github.com/main-branch/yard_example_test/compare/v0.2.0...v0.2.1) (2026-02-28)
 
 
