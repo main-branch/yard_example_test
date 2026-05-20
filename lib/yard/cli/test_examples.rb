@@ -261,15 +261,19 @@ module YARD
       # 3. Splits on newlines, strips leading and trailing whitespace from
       #    each line, and discards any blank lines.
       #
+      # If +text+ is +nil+ or blank, returns an empty array.
+      #
       # The resulting array is consumed by {#extract_expectations} to identify
       # code lines and their corresponding +#=>+ assertion lines.
       #
-      # @param text [String] the raw body text of a +@example+ tag
+      # @param text [String, nil] the raw body text of a +@example+ tag
       #
       # @return [Array<String>] the normalized, non-empty lines of the example;
       #   +#=>+ lines are always separate entries, never inline with code
       #
       def normalize_example_lines(text)
+        return [] if text.nil? || text.strip.empty?
+
         text = text.gsub('# =>', '#=>')
         text = text.gsub('#=>', "\n#=>")
         text.split("\n").map(&:strip).reject(&:empty?)

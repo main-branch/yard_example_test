@@ -280,6 +280,26 @@ Feature: yard test-examples
     When I run `bundle exec yard test-examples`
     Then the output should contain "1 runs, 0 assertions, 0 failures, 0 errors, 0 skips"
 
+  Scenario: runs titled @example tags without a body
+    Given a file named "example_test_helper.rb" with:
+      """
+      require 'app/app'
+      """
+    And a file named "app/app.rb" with:
+      """
+      # @example sums two numbers
+      def sum(one, two)
+        one + two
+      end
+      """
+    When I run `bundle exec yard test-examples`
+    Then the output should contain "1 runs, 0 assertions, 0 failures, 0 errors, 0 skips"
+
+  Scenario: normalizes nil example text as no lines
+    When I run `bundle exec ruby -e "require 'yard_example_test'; command = YARD::CLI::TestExamples.new; p command.send(:normalize_example_lines, nil)"`
+    Then the output should contain "[]"
+    And the exit status should be 0
+
   Scenario: handles `# =>` return comment
     Given a file named "example_test_helper.rb" with:
       """
